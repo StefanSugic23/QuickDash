@@ -96,13 +96,15 @@ function updateCashNum(){
 
 sendToKitchen.addEventListener("click", function(){
 
-    if(kitchenCart.length === 0)
+    if(kitchenCart.length === 0){
         errorMsg.textContent = "No added products yet!"
+        return;
+    }
 
     let kitchenOrders = [];
 
     try{
-        const savedOrders = localStorage.setItem("kitchenOrders")
+        const savedOrders = localStorage.getItem("kitchenOrders")
         kitchenOrders = JSON.parse(savedOrders) || [];
     }
     catch(err){
@@ -110,11 +112,45 @@ sendToKitchen.addEventListener("click", function(){
         console.log(err)
     }
 
-    let newOrder = {
-        id: Date.now(),
-        items: []
+       
+    
+    
+    
+    for (let i = 0; i < kitchenCart.length; i++) {
+        let item = kitchenCart[i];
+
+        let newOrder = {
+            code: item.code,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity
+        }
+
+        /*
+        newOrder.items.push({
+            code: item.code,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity
+        });
     }
-    for (let i=0; i<kitchenCart.length;i++) {
-        
+        */
+    
+    kitchenOrders.push(newOrder)
+
+    
+
+    const text = JSON.stringify(kitchenOrders)
+    localStorage.setItem("kitchenOrders", text)
+
+    kitchenCart = [];
+
+    save();
+    render();
+    updateCashNum();
+    updateTotal();
+
+    errorMsg.textContent = "Order sent to kitchen"
     }
 })
+
